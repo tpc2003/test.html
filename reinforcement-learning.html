@@ -1,84 +1,76 @@
-<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>12 — Reinforcement Learning | ML Algorithm Visualizer</title><style>
-*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:#f6f7fb;color:#172033}
-.container{max-width:1120px;margin:auto;padding:28px 20px 50px}.top{display:flex;justify-content:space-between;gap:18px;align-items:flex-start}
-.badge{display:inline-block;padding:7px 11px;border-radius:999px;background:#e9ecff;color:#3843a8;font-weight:700;font-size:12px;letter-spacing:.04em}
-h1{font-size:clamp(30px,5vw,52px);line-height:1;margin:12px 0 10px}p{line-height:1.7;color:#5b6577}
-.grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px;margin-top:24px}.card{background:white;border:1px solid #e5e8ef;border-radius:20px;padding:20px;box-shadow:0 10px 30px #1720330d}
-canvas{width:100%;height:420px;border-radius:14px;background:#fbfcff;border:1px solid #edf0f5}
-.controls{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0}.controls label{font-size:13px;font-weight:700;color:#596273}.controls input,.controls select,.controls button{margin-left:6px;padding:8px 10px;border:1px solid #dce1ea;border-radius:9px;background:white}
-.controls button{cursor:pointer;font-weight:700}.formula{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#111827;color:#e5e7eb;padding:14px;border-radius:12px;overflow:auto}
-.footer{margin-top:22px;font-size:13px;color:#7b8494}.nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}.nav a{text-decoration:none;color:#3440a4;background:#eef0ff;padding:8px 10px;border-radius:9px;font-size:12px;font-weight:700}
-@media(max-width:800px){.grid{grid-template-columns:1fr}.top{display:block}canvas{height:330px}}
-</style>
-<style id="ml-nav-style">
-.ml-nav {
-  position: sticky;
-  top: 0;
-  z-index: 9999;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
-  margin: 0 0 18px;
-  background: rgba(255,255,255,.94);
-  border-bottom: 1px solid #e5e7eb;
-  box-shadow: 0 4px 18px rgba(0,0,0,.07);
-  backdrop-filter: blur(10px);
-}
-.ml-nav-group { display:flex; gap:8px; flex-wrap:wrap; }
-.ml-nav a {
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  padding:9px 13px;
-  border-radius:10px;
-  text-decoration:none;
-  font:700 13px/1 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  color:#1f2937;
-  background:#f3f4f6;
-  border:1px solid #e5e7eb;
-}
-.ml-nav a:hover { background:#e5e7eb; transform:translateY(-1px); }
-.ml-nav a.home { color:#fff; background:#374151; border-color:#374151; }
-@media (max-width:600px) {
-  .ml-nav { align-items:flex-start; }
-  .ml-nav a { padding:8px 10px; font-size:12px; }
-}
-</style>
-
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>Reinforcement Learning Visualizer</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { margin: 0; padding: 20px; font-family: sans-serif; background: #f8fafc; display: flex; gap: 20px; height: 100vh; box-sizing: border-box; }
+        .sidebar { width: 320px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .main { flex: 1; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
+        .group { margin-bottom: 15px; }
+        label { font-size: 0.9em; font-weight: bold; display: block; margin-bottom: 5px; }
+        input[type="range"] { width: 100%; }
+        .canvas-box { flex: 1; position: relative; }
+        .nav-btn { display: inline-block; margin-bottom: 15px; text-decoration: none; color: #2563eb; font-weight: bold; }
+    </style>
 </head>
 <body>
-
-<nav class="ml-nav" aria-label="Page navigation">
-  <div class="ml-nav-group">
-    <a class="home" href="index.html">⌂ หน้าแรก</a>
-    <a href="javascript:history.back()">← ย้อนกลับ</a>
-  </div>
-</nav>
-<main class="container">
-<div class="top"><div><span class="badge">Reinforcement Learning</span><h1>Reinforcement Learning</h1><p>Learn actions by interacting with an environment and maximizing cumulative reward.</p></div><div class="badge">ONE-PAGE HTML</div></div>
-<div class="grid"><section class="card"><h2>Interactive visualization</h2><p>ภาพจำลองเพื่อช่วยเข้าใจแนวคิดของอัลกอริทึม</p><canvas id="plot"></canvas>
-<div class="controls"><label>Animation <button id="toggle">Pause</button></label><label>Speed <input id="speed" type="range" min="0.2" max="3" value="1" step="0.1"></label></div></section>
-<aside class="card"><h2>Key idea</h2><p>Learn actions by interacting with an environment and maximizing cumulative reward.</p><h3>Core concept</h3><div class="formula">Q(s,a) ← Q(s,a) + α[r + γ max Q(s',a') − Q(s,a)]</div>
-<h3>Learning type</h3><p><strong>Reinforcement Learning</strong></p>
-<h3>How to read</h3><p>ดูการเคลื่อนที่/โครงสร้างในกราฟ แล้วเชื่อมกับแนวคิดของโมเดล เช่น เส้นแบ่งกลุ่ม จุดศูนย์กลาง ต้นไม้ หรือการไหลของข้อมูล</p></aside></div>
-<div class="card" style="margin-top:18px"><h2>Algorithm navigation</h2><div class="nav"><a href="linear-regression.html">01</a><a href="logistic-regression.html">02</a><a href="knn.html">03</a><a href="decision-tree.html">04</a><a href="random-forest.html">05</a><a href="support-vector-machine-svm.html">06</a><a href="k-means.html">07</a><a href="mlp-neural-network.html">08</a><a href="cnn.html">09</a><a href="lstm.html">10</a><a href="transformer.html">11</a><a href="xgboost.html">13</a><a href="stacking.html">14</a></div></div>
-<div class="footer">Educational visualization • Standalone HTML • No external libraries required • 12 — Reinforcement Learning</div>
-</main>
+    <div class="sidebar">
+        <a href="index.html" class="nav-btn">← กลับหน้าหลัก</a>
+        <h2>Reinforcement Learning (Q-Learning)</h2>
+        <div class="group">
+            <label>Learning Rate ($\alpha$): <span id="aVal">0.1</span></label>
+            <input type="range" id="alpha" min="0.01" max="0.5" step="0.01" value="0.1" oninput="update()">
+        </div>
+        <div class="group">
+            <label>Discount Factor ($\gamma$): <span id="gVal">0.9</span></label>
+            <input type="range" id="gamma" min="0.5" max="0.99" step="0.01" value="0.9" oninput="update()">
+        </div>
+        <div class="group">
+            <label>Exploration ($\epsilon$): <span id="eVal">0.2</span></label>
+            <input type="range" id="epsilon" min="0.01" max="1" step="0.05" value="0.2" oninput="update()">
+        </div>
+        <button onclick="update()" style="width:100%; padding:8px; cursor:pointer;">จำลองการเรียนรู้ (Re-run Episodes)</button>
+    </div>
+    <div class="main">
+        <div class="canvas-box"><canvas id="chart"></canvas></div>
+    </div>
 <script>
-const c=document.getElementById('plot'),ctx=c.getContext('2d');
-function resize(){const d=devicePixelRatio||1,r=c.getBoundingClientRect();c.width=r.width*d;c.height=r.height*d;ctx.setTransform(d,0,0,d,0,0);draw()}
-window.addEventListener('resize',resize);
-function axes(){const w=c.clientWidth,h=c.clientHeight;ctx.strokeStyle='#d9deea';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(45,15);ctx.lineTo(45,h-35);ctx.lineTo(w-15,h-35);ctx.stroke()}
-function dot(x,y,r=5){ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill()}
-function txt(t,x,y){ctx.fillStyle='#596273';ctx.font='12px system-ui';ctx.fillText(t,x,y)}
+let chart;
+function update() {
+    const alpha = parseFloat(document.getElementById('alpha').value);
+    const gamma = parseFloat(document.getElementById('gamma').value);
+    const eps = parseFloat(document.getElementById('epsilon').value);
 
-function draw(){axes();const w=c.clientWidth,h=c.clientHeight;ctx.strokeStyle='#4f46e5';ctx.lineWidth=2;for(let i=0;i<6;i++)for(let j=0;j<5;j++){let x=55+i*(w-100)/5,y=45+j*(h-100)/4;ctx.strokeRect(x,y,(w-100)/5,(h-100)/4)}ctx.fillStyle='#10b981';dot(80,80,9);ctx.fillStyle='#ef4444';dot(w-90,h-80,9);ctx.strokeStyle='#111827';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(80,80);ctx.lineTo(w*.35,120);ctx.lineTo(w*.55,h*.55);ctx.lineTo(w-90,h-80);ctx.stroke();txt('state → action → reward',w/2-65,25)}
+    document.getElementById('aVal').innerText = alpha;
+    document.getElementById('gVal').innerText = gamma;
+    document.getElementById('eVal').innerText = eps;
 
-let running=true, t=0, speed=1; document.getElementById('toggle').onclick=()=>{running=!running;document.getElementById('toggle').textContent=running?'Pause':'Play'};
-document.getElementById('speed').oninput=e=>speed=+e.target.value;
-function loop(){if(running){t+=.02*speed;draw()}requestAnimationFrame(loop)} resize(); loop();
-</script></body></html>
+    // Simulation of cumulative rewards over episodes
+    const rewards = [];
+    let r = 0;
+    for (let ep = 1; ep <= 50; ep++) {
+        r += Math.log(ep) * (1 - eps) * alpha * 10 + Math.random() * 5;
+        rewards.push({ x: ep, y: r });
+    }
+
+    if (chart) chart.destroy();
+    chart = new Chart(document.getElementById('chart'), {
+        type: 'line',
+        data: {
+            datasets: [{
+                label: 'Cumulative Reward vs Episodes',
+                data: rewards,
+                borderColor: '#10b981',
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                fill: true
+            }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+    });
+}
+window.onload = update;
+</script>
+</body>
+</html>
