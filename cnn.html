@@ -7,11 +7,13 @@
     <style>
         body { margin: 0; padding: 20px; font-family: sans-serif; background: #f8fafc; display: flex; gap: 20px; height: 100vh; box-sizing: border-box; }
         .sidebar { width: 320px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .main { flex: 1; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
+        .main { flex: 1; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; flex-direction: column; gap: 15px; }
         .group { margin-bottom: 15px; }
         label { font-size: 0.9em; font-weight: bold; display: block; margin-bottom: 5px; }
         input[type="range"] { width: 100%; }
         .canvas-box { flex: 1; position: relative; }
+        .info-panel { background: #f1f5f9; padding: 15px; border-radius: 6px; font-size: 0.85em; color: #334155; line-height: 1.5; }
+        .info-panel h4 { margin: 0 0 5px 0; color: #1e293b; }
         .nav-btn { display: inline-block; margin-bottom: 15px; text-decoration: none; color: #2563eb; font-weight: bold; }
     </style>
 </head>
@@ -31,6 +33,12 @@
     </div>
     <div class="main">
         <div class="canvas-box"><canvas id="chart"></canvas></div>
+        <div class="info-panel">
+            <h4>📌 การทำงานของอัลกอริทึม</h4>
+            ประมวลผลข้อมูลภาพหรือโครงสร้าง grid โดยใช้ Filter/Kernel เลื่อนสแกนทั่วภาพเพื่อสกัดเอารักษณะเด่น (Features) เช่น เส้น ขอบ ออกมาเป็น Feature Map<br>
+            * <b>Kernel Size:</b> ขนาดตารางหน้าต่าง Filter ที่ใช้สแกน<br>
+            * <b>Stride:</b> ระยะการก้าวขยับของ Filter ในแต่ละช่อง
+        </div>
     </div>
 <script>
 let chart;
@@ -67,9 +75,3 @@ window.onload = update;
 </script>
 </body>
 </html>
-function draw(){axes();const w=c.clientWidth,h=c.clientHeight;ctx.strokeStyle='#4f46e5';ctx.lineWidth=3;ctx.beginPath();for(let i=0;i<12;i++){let x=55+i*(w-100)/11,y=h/2+Math.sin(i*.8)*70;ctx.lineTo(x,y)}ctx.stroke();for(let i=0;i<12;i++){let x=55+i*(w-100)/11,y=h/2+Math.sin(i*.8)*70;ctx.fillStyle=i%2?'#10b981':'#ef4444';dot(x,y,6)}txt('sequence / feature representation →',w-235,25)}
-
-let running=true, t=0, speed=1; document.getElementById('toggle').onclick=()=>{running=!running;document.getElementById('toggle').textContent=running?'Pause':'Play'};
-document.getElementById('speed').oninput=e=>speed=+e.target.value;
-function loop(){if(running){t+=.02*speed;draw()}requestAnimationFrame(loop)} resize(); loop();
-</script></body></html>
