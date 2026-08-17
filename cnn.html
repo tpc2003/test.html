@@ -1,81 +1,72 @@
-<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>09 — CNN | ML Algorithm Visualizer</title><style>
-*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:#f6f7fb;color:#172033}
-.container{max-width:1120px;margin:auto;padding:28px 20px 50px}.top{display:flex;justify-content:space-between;gap:18px;align-items:flex-start}
-.badge{display:inline-block;padding:7px 11px;border-radius:999px;background:#e9ecff;color:#3843a8;font-weight:700;font-size:12px;letter-spacing:.04em}
-h1{font-size:clamp(30px,5vw,52px);line-height:1;margin:12px 0 10px}p{line-height:1.7;color:#5b6577}
-.grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px;margin-top:24px}.card{background:white;border:1px solid #e5e8ef;border-radius:20px;padding:20px;box-shadow:0 10px 30px #1720330d}
-canvas{width:100%;height:420px;border-radius:14px;background:#fbfcff;border:1px solid #edf0f5}
-.controls{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0}.controls label{font-size:13px;font-weight:700;color:#596273}.controls input,.controls select,.controls button{margin-left:6px;padding:8px 10px;border:1px solid #dce1ea;border-radius:9px;background:white}
-.controls button{cursor:pointer;font-weight:700}.formula{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#111827;color:#e5e7eb;padding:14px;border-radius:12px;overflow:auto}
-.footer{margin-top:22px;font-size:13px;color:#7b8494}.nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}.nav a{text-decoration:none;color:#3440a4;background:#eef0ff;padding:8px 10px;border-radius:9px;font-size:12px;font-weight:700}
-@media(max-width:800px){.grid{grid-template-columns:1fr}.top{display:block}canvas{height:330px}}
-</style>
-<style id="ml-nav-style">
-.ml-nav {
-  position: sticky;
-  top: 0;
-  z-index: 9999;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
-  margin: 0 0 18px;
-  background: rgba(255,255,255,.94);
-  border-bottom: 1px solid #e5e7eb;
-  box-shadow: 0 4px 18px rgba(0,0,0,.07);
-  backdrop-filter: blur(10px);
-}
-.ml-nav-group { display:flex; gap:8px; flex-wrap:wrap; }
-.ml-nav a {
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  padding:9px 13px;
-  border-radius:10px;
-  text-decoration:none;
-  font:700 13px/1 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  color:#1f2937;
-  background:#f3f4f6;
-  border:1px solid #e5e7eb;
-}
-.ml-nav a:hover { background:#e5e7eb; transform:translateY(-1px); }
-.ml-nav a.home { color:#fff; background:#374151; border-color:#374151; }
-@media (max-width:600px) {
-  .ml-nav { align-items:flex-start; }
-  .ml-nav a { padding:8px 10px; font-size:12px; }
-}
-</style>
-
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>CNN Architecture Visualizer</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { margin: 0; padding: 20px; font-family: sans-serif; background: #f8fafc; display: flex; gap: 20px; height: 100vh; box-sizing: border-box; }
+        .sidebar { width: 320px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .main { flex: 1; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
+        .group { margin-bottom: 15px; }
+        label { font-size: 0.9em; font-weight: bold; display: block; margin-bottom: 5px; }
+        input[type="range"] { width: 100%; }
+        .canvas-box { flex: 1; position: relative; }
+        .nav-btn { display: inline-block; margin-bottom: 15px; text-decoration: none; color: #2563eb; font-weight: bold; }
+    </style>
 </head>
 <body>
-
-<nav class="ml-nav" aria-label="Page navigation">
-  <div class="ml-nav-group">
-    <a class="home" href="index.html">⌂ หน้าแรก</a>
-    <a href="javascript:history.back()">← ย้อนกลับ</a>
-  </div>
-</nav>
-<main class="container">
-<div class="top"><div><span class="badge">Deep Learning / Typically Supervised</span><h1>CNN</h1><p>Use convolutional filters to learn spatial patterns, especially in images.</p></div><div class="badge">ONE-PAGE HTML</div></div>
-<div class="grid"><section class="card"><h2>Interactive visualization</h2><p>ภาพจำลองเพื่อช่วยเข้าใจแนวคิดของอัลกอริทึม</p><canvas id="plot"></canvas>
-<div class="controls"><label>Animation <button id="toggle">Pause</button></label><label>Speed <input id="speed" type="range" min="0.2" max="3" value="1" step="0.1"></label></div></section>
-<aside class="card"><h2>Key idea</h2><p>Use convolutional filters to learn spatial patterns, especially in images.</p><h3>Core concept</h3><div class="formula">feature maps = convolution(input, filters)</div>
-<h3>Learning type</h3><p><strong>Deep Learning / Typically Supervised</strong></p>
-<h3>How to read</h3><p>ดูการเคลื่อนที่/โครงสร้างในกราฟ แล้วเชื่อมกับแนวคิดของโมเดล เช่น เส้นแบ่งกลุ่ม จุดศูนย์กลาง ต้นไม้ หรือการไหลของข้อมูล</p></aside></div>
-<div class="card" style="margin-top:18px"><h2>Algorithm navigation</h2><div class="nav"><a href="linear-regression.html">01</a><a href="logistic-regression.html">02</a><a href="knn.html">03</a><a href="decision-tree.html">04</a><a href="random-forest.html">05</a><a href="support-vector-machine-svm.html">06</a><a href="k-means.html">07</a><a href="mlp-neural-network.html">08</a><a href="lstm.html">10</a><a href="transformer.html">11</a><a href="reinforcement-learning.html">12</a><a href="xgboost.html">13</a><a href="stacking.html">14</a></div></div>
-<div class="footer">Educational visualization • Standalone HTML • No external libraries required • 09 — CNN</div>
-</main>
+    <div class="sidebar">
+        <a href="index.html" class="nav-btn">← กลับหน้าหลัก</a>
+        <h2>CNN Architecture</h2>
+        <div class="group">
+            <label>Kernel Size: <span id="kVal">3</span>x3</label>
+            <input type="range" id="kernel" min="3" max="7" step="2" value="3" oninput="update()">
+        </div>
+        <div class="group">
+            <label>Stride: <span id="sVal">1</span></label>
+            <input type="range" id="stride" min="1" max="3" step="1" value="1" oninput="update()">
+        </div>
+        <button onclick="update()" style="width:100%; padding:8px; cursor:pointer;">คำนวณ Feature Map</button>
+    </div>
+    <div class="main">
+        <div class="canvas-box"><canvas id="chart"></canvas></div>
+    </div>
 <script>
-const c=document.getElementById('plot'),ctx=c.getContext('2d');
-function resize(){const d=devicePixelRatio||1,r=c.getBoundingClientRect();c.width=r.width*d;c.height=r.height*d;ctx.setTransform(d,0,0,d,0,0);draw()}
-window.addEventListener('resize',resize);
-function axes(){const w=c.clientWidth,h=c.clientHeight;ctx.strokeStyle='#d9deea';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(45,15);ctx.lineTo(45,h-35);ctx.lineTo(w-15,h-35);ctx.stroke()}
-function dot(x,y,r=5){ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill()}
-function txt(t,x,y){ctx.fillStyle='#596273';ctx.font='12px system-ui';ctx.fillText(t,x,y)}
+let chart;
+function update() {
+    const k = parseInt(document.getElementById('kernel').value);
+    const s = parseInt(document.getElementById('stride').value);
+    document.getElementById('kVal').innerText = k;
+    document.getElementById('sVal').innerText = s;
 
+    const inputDim = 28;
+    const outputDim = Math.floor((inputDim - k) / s) + 1;
+
+    const mapData = [];
+    for (let x = 0; x < outputDim; x++) {
+        for (let y = 0; y < outputDim; y++) {
+            mapData.push({ x, y, value: Math.sin(x + y) });
+        }
+    }
+
+    if (chart) chart.destroy();
+    chart = new Chart(document.getElementById('chart'), {
+        type: 'scatter',
+        data: {
+            datasets: [{
+                label: `Feature Map Grid (${outputDim}x${outputDim})`,
+                data: mapData,
+                backgroundColor: '#8b5cf6'
+            }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+    });
+}
+window.onload = update;
+</script>
+</body>
+</html>
 function draw(){axes();const w=c.clientWidth,h=c.clientHeight;ctx.strokeStyle='#4f46e5';ctx.lineWidth=3;ctx.beginPath();for(let i=0;i<12;i++){let x=55+i*(w-100)/11,y=h/2+Math.sin(i*.8)*70;ctx.lineTo(x,y)}ctx.stroke();for(let i=0;i<12;i++){let x=55+i*(w-100)/11,y=h/2+Math.sin(i*.8)*70;ctx.fillStyle=i%2?'#10b981':'#ef4444';dot(x,y,6)}txt('sequence / feature representation →',w-235,25)}
 
 let running=true, t=0, speed=1; document.getElementById('toggle').onclick=()=>{running=!running;document.getElementById('toggle').textContent=running?'Pause':'Play'};
