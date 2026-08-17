@@ -7,11 +7,13 @@
     <style>
         body { margin: 0; padding: 20px; font-family: sans-serif; background: #f8fafc; display: flex; gap: 20px; height: 100vh; box-sizing: border-box; }
         .sidebar { width: 320px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .main { flex: 1; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
+        .main { flex: 1; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; flex-direction: column; gap: 15px; }
         .group { margin-bottom: 15px; }
         label { font-size: 0.9em; font-weight: bold; display: block; margin-bottom: 5px; }
         input[type="range"] { width: 100%; }
         .canvas-box { flex: 1; position: relative; }
+        .info-panel { background: #f1f5f9; padding: 15px; border-radius: 6px; font-size: 0.85em; color: #334155; line-height: 1.5; }
+        .info-panel h4 { margin: 0 0 5px 0; color: #1e293b; }
         .nav-btn { display: inline-block; margin-bottom: 15px; text-decoration: none; color: #2563eb; font-weight: bold; }
     </style>
 </head>
@@ -20,46 +22,55 @@
         <a href="index.html" class="nav-btn">← กลับหน้าหลัก</a>
         <h2>Linear Regression</h2>
         <div class="group">
-            <label>ความชัน Slope (m): <span id="mVal">1.5</span></label>
-            <input type="range" id="slope" min="-5" max="5" step="0.1" value="1.5" oninput="update()">
+            <label>Slope (m): <span id="mVal">1.0</span></label>
+            <input type="range" id="slope" min="-3" max="3" step="0.1" value="1.0" oninput="update()">
         </div>
         <div class="group">
-            <label>จุดตัด Y-Intercept (c): <span id="cVal">10</span></label>
-            <input type="range" id="intercept" min="-50" max="50" value="10" oninput="update()">
+            <label>Intercept (c): <span id="cVal">0</span></label>
+            <input type="range" id="intercept" min="-50" max="50" step="1" value="0" oninput="update()">
         </div>
         <div class="group">
-            <label>Noise Level: <span id="nVal">15</span></label>
-            <input type="range" id="noise" min="0" max="50" value="15" oninput="generateData(); update();">
+            <label>Noise Level: <span id="nVal">10</span></label>
+            <input type="range" id="noise" min="0" max="30" step="1" value="10" oninput="update()">
         </div>
         <button onclick="generateData(); update();" style="width:100%; padding:8px; cursor:pointer;">สุ่มข้อมูลใหม่</button>
     </div>
     <div class="main">
         <div class="canvas-box"><canvas id="chart"></canvas></div>
+        <div class="info-panel">
+            <h4>📌 การทำงานของอัลกอริทึม</h4>
+            ทำนายค่าเชิงตัวเลขแบบต่อเนื่อง (Continuous Value) โดยหาความสัมพันธ์เชิงเส้นตรงระหว่างตัวแปรอิสระ (X) และตัวแปรตาม (Y) ให้อยู่ในรูปสมการ Y = mX + c<br>
+            * <b>Slope (m):</b> กำหนดอัตราการเปลี่ยนแปลงหรือความชันของเส้นทำนาย<br>
+            * <b>Intercept (c):</b> จุดที่เส้นตรงตัดแกน Y เมื่อ X = 0<br>
+            * <b>Noise:</b> สัญญาณรบกวนในชุดข้อมูล จำลองความคลาดเคลื่อนในชีวิตจริง
+        </div>
     </div>
 <script>
 let chart, rawData = [];
 function generateData() {
     rawData = [];
-    const noise = parseFloat(document.getElementById('noise').value);
-    for (let x = 0; x <= 100; x += 3) {
-        const err = (Math.random() - 0.5) * noise * 2;
-        rawData.push({ x, y: 1.5 * x + 10 + err });
+    const noiseLevel = parseFloat(document.getElementById('noise').value);
+    for (let i = 0; i < 40; i++) {
+        const x = Math.random() * 100;
+        const noise = (Math.random() - 0.5) * noiseLevel * 2;
+        rawData.push({ x, y: x + noise });
     }
 }
 function update() {
     const m = parseFloat(document.getElementById('slope').value);
     const c = parseFloat(document.getElementById('intercept').value);
+    const noise = parseFloat(document.getElementById('noise').value);
     document.getElementById('mVal').innerText = m;
     document.getElementById('cVal').innerText = c;
-    document.getElementById('nVal').innerText = document.getElementById('noise').value;
+    document.getElementById('nVal').innerText = noise;
 
-    const lineData = [{ x: 0, y: c }, { x: 100, y: m * 100 + c }];
+    const linePoints = [{ x: 0, y: c }, { x: 100, y: m * 100 + c }];
     if (chart) chart.destroy();
     chart = new Chart(document.getElementById('chart'), {
         data: {
             datasets: [
-                { type: 'scatter', label: 'Data Points', data: rawData, backgroundColor: '#2563eb' },
-                { type: 'line', label: 'Regression Line', data: lineData, borderColor: '#ef4444', fill: false }
+                { type: 'scatter', label: 'Data Points', data: rawData, backgroundColor: '#3b82f6' },
+                { type: 'line', label: 'Regression Line', data: linePoints, borderColor: '#ef4444', fill: false }
             ]
         },
         options: { responsive: true, maintainAspectRatio: false }
