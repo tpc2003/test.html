@@ -7,11 +7,13 @@
     <style>
         body { margin: 0; padding: 20px; font-family: sans-serif; background: #f8fafc; display: flex; gap: 20px; height: 100vh; box-sizing: border-box; }
         .sidebar { width: 320px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .main { flex: 1; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
+        .main { flex: 1; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; flex-direction: column; gap: 15px; }
         .group { margin-bottom: 15px; }
         label { font-size: 0.9em; font-weight: bold; display: block; margin-bottom: 5px; }
         input[type="range"] { width: 100%; }
         .canvas-box { flex: 1; position: relative; }
+        .info-panel { background: #f1f5f9; padding: 15px; border-radius: 6px; font-size: 0.85em; color: #334155; line-height: 1.5; }
+        .info-panel h4 { margin: 0 0 5px 0; color: #1e293b; }
         .nav-btn { display: inline-block; margin-bottom: 15px; text-decoration: none; color: #2563eb; font-weight: bold; }
     </style>
 </head>
@@ -31,6 +33,12 @@
     </div>
     <div class="main">
         <div class="canvas-box"><canvas id="chart"></canvas></div>
+        <div class="info-panel">
+            <h4>📌 การทำงานของอัลกอริทึม</h4>
+            โครงข่ายประสาทเทียมแบบป้อนหน้า (Feedforward) ประกอบด้วย Input Layer, Hidden Layers และ Output Layer ใช้หลักการ Backpropagation ปรับค่าน้ำหนัก (Weights) เพื่อลดค่า Error (Loss)<br>
+            * <b>Learning Rate ($\eta$):</b> อัตราการเรียนรู้ในการปรับ Weights<br>
+            * <b>Hidden Neurons:</b> จำนวนโหนดประมวลผลในเลเยอร์ซ่อน
+        </div>
     </div>
 <script>
 let chart;
